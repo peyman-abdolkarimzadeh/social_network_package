@@ -1,0 +1,5 @@
+﻿pandas
+matplotlib
+networkx
+python-pptx
+openpyxl
