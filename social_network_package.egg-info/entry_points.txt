@@ -1,0 +1,2 @@
+[console_scripts]
+social-report = social_network_package.main:cli

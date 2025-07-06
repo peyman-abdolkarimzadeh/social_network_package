@@ -1,9 +1,11 @@
 ﻿import pandas as pd
 import re
-from .config import EXCEL_INPUT_FILE
 
-def load_data():
-    df = pd.read_excel(EXCEL_INPUT_FILE, sheet_name="Sheet1")
+
+import pandas as pd
+
+def load_data(excel_path):
+    df = pd.read_excel(excel_path, sheet_name=0)
 
     rating_columns = [col for col in df.columns if col.startswith("How would you rate your connection with")]
     target_names = [re.sub(r"How would you rate your connection with ", "", col).strip("?") for col in rating_columns]
@@ -51,5 +53,6 @@ def load_data():
     from .config import ASIA_OFFICES
     attributes["Location"] = attributes["Office"].apply(lambda x: "Asia" if x in ASIA_OFFICES else x)
     nodes_df = nodes_df.merge(attributes, on="Name", how="left")
-
+    
+    
     return nodes_df, edges_df

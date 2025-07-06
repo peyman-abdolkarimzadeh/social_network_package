@@ -1,48 +1,47 @@
-﻿
-
+﻿import argparse
 import os
-from .visualizations.draw_graph import draw_colored_network
-from .reports.individual_report import generate_report  # Or batch generator
+from pathlib import Path
 from .data_loader import load_data
 from .network_builder import build_graph, mutual_strong_edges
 from .reports.individual_report import generate_report
 
-def main():
-    # --- Get file path from user ---
-    file_path = input("📄 Enter path to the Excel file (e.g., data.xlsx): ").strip().strip('"')
-    if not os.path.isfile(file_path):
-        print(f"❌ File not found: {file_path}")
+def cli():
+    parser = argparse.ArgumentParser(description="Generate a social network report.")
+    parser.add_argument("--file", required=True, help="Path to Excel file")
+    parser.add_argument("--outdir", required=False, help="Optional output directory")
+    args = parser.parse_args()
+
+    if not os.path.exists(args.file):
+        print(f" File not found: {args.file}")
         return
 
-    # Override file path in config dynamically
-    from . import config
-    config.EXCEL_INPUT_FILE = file_path
+    nodes_df, edges_df = load_data(args.file)
 
-    # --- Load data ---
-    nodes_df, edges_df = load_data()
-
-    # Show available names
-    print("\nAvailable names:")
+    # Show names
     names = sorted(nodes_df["Name"].dropna().unique())
+    print("\n Available Names:")
     for i, name in enumerate(names, 1):
         print(f"{i}. {name}")
 
-    # --- Get target person from user ---
-    choice = input("\n👤 Enter name or number to generate report for: ").strip()
     try:
-        index = int(choice)
-        person = names[index - 1]
-    except:
-        person = choice
-
-    if person not in names:
-        print(f"❌ Name '{person}' not found.")
+        selected = int(input("\n Enter the number of the person to generate report for: "))
+        if selected < 1 or selected > len(names):
+            raise ValueError
+    except ValueError:
+        print(" Invalid selection.")
         return
 
-    # --- Generate report ---
-    output_file = f"{person.replace(' ', '_')}_Network_Report.pdf"
-    generate_report(person, edges_df, output_file)
-    print(f"\n✅ Report generated: {output_file}")
+    name = names[selected - 1]
 
-if __name__ == "__main__":
-    main()
+    # Determine output directory
+    if args.outdir:
+        outdir = Path(args.outdir).expanduser()
+    else:
+        outdir = Path.home() / "Desktop"
+
+    outdir.mkdir(parents=True, exist_ok=True)  # ensure it exists
+    output_file = outdir / f"{name.replace(' ', '_')}_Network_Report.pdf"
+
+    generate_report(name, edges_df, str(output_file))
+    print(f"\n Report saved to: {output_file}")
+    return str(output_file)

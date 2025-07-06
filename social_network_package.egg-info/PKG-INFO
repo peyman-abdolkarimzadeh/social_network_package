@@ -1,0 +1,9 @@
+Metadata-Version: 2.4
+Name: social_network_package
+Version: 0.1
+Requires-Dist: pandas
+Requires-Dist: matplotlib
+Requires-Dist: networkx
+Requires-Dist: python-pptx
+Requires-Dist: openpyxl
+Dynamic: requires-dist
