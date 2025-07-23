@@ -11,8 +11,8 @@ social_network_package/
 ├── reports/                          # Report generation modules
 ├── visualizations/                   # Graph drawing tools
 ├── __init__.py
-├── main.py                			  # CLI entry point
-├── config.py               		  # Customizable settings
+├── main.py                			      # CLI entry point
+├── config.py               		      # Customizable settings
 ├── data_loader.py                    # Dynamic Excel data loader
 ├── network_builder.py                # Graph logic and analysis
 ├── run_social_report.py              # For PyInstaller builds
